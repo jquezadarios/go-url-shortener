@@ -4,6 +4,7 @@ import (
     "log"
     "os"
     "github.com/gin-gonic/gin"
+    "github.com/rs/cors"
     "url-shortener/config"
     "url-shortener/controllers"
     "url-shortener/middleware"
@@ -26,6 +27,20 @@ func main() {
     middleware.InitJWTKey(os.Getenv("JWT_SECRET_KEY"))
 
     r := gin.Default()
+
+    // Configurar CORS
+    config := cors.New(cors.Options{
+        AllowedOrigins:   []string{"http://localhost:3000"}, // Ajusta esto a la URL de tu frontend
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Origin", "Content-Type", "Accept", "Authorization"},
+        AllowCredentials: true,
+    })
+
+    // Usar el middleware CORS
+    r.Use(func(c *gin.Context) {
+        config.HandlerFunc(c.Writer, c.Request)
+        c.Next()
+    })
 
     authController := controllers.NewAuthController(db)
 
