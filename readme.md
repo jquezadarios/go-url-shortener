@@ -8,7 +8,7 @@ Simple high scalable url shortener
 - Fast, writen in Go
 - Multiple users 
 - Uniques shortcodes with no collision
-- Cache with redis
+- Cache
 - High scalable 
 
 ## Installation
