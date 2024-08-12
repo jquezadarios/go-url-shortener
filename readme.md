@@ -12,8 +12,6 @@ Simple high scalable url shortener
 
 ## Installation
 
-Install my-project with npm
-
 ```bash
   docker-compose up --build
 ```
