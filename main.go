@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "log"
     "os"
     "github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
     "url-shortener/models"
     "url-shortener/repositories"
     "url-shortener/services"
+    "url-shortener/cache"
 )
 
 func main() {
@@ -44,20 +46,25 @@ func main() {
         c.Next()
     })
 
+    // Initialize memcached
+    memcachedHost := os.Getenv("MEMCACHED_HOST")
+    memcachedPort := os.Getenv("MEMCACHED_PORT")
+    memcachedAddress := fmt.Sprintf("%s:%s", memcachedHost, memcachedPort)
+    memcachedClient := cache.NewMemcachedClient(memcachedAddress)
+
     // Initialize repositories
     urlRepo := repositories.NewURLRepository(db)
     userRepo := repositories.NewUserRepository(db)
-
-	
+   
     // Initialize services
-	authService := services.NewAuthService(userRepo)
-    urlService := services.NewURLService(urlRepo)
-    
+    authService := services.NewAuthService(userRepo)
+    urlService := services.NewURLService(urlRepo, memcachedClient)
+   
     // Initialize controllers
     urlController := controllers.NewURLController(urlService)
     authController := controllers.NewAuthController(authService)
 
-	auth := r.Group("/auth")
+    auth := r.Group("/auth")
     {
         auth.POST("/register", authController.Register)
         auth.POST("/login", authController.Login)
@@ -73,6 +80,5 @@ func main() {
     }
 
     r.GET("/:shortCode", urlController.RedirectURL)
-
     r.Run(":8080")
 }
