@@ -14,6 +14,8 @@ type URL struct {
 	User      User           `gorm:"foreignKey:UserID" json:"-"`
 	ViewCount uint           `gorm:"default:0" json:"view_count"`
 	Campaign  string         `gorm:"index" json:"campaign"`
+	Medium  string         `gorm:"index" json:"campaign"`
+	Source  string         `gorm:"index" json:"campaign"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
