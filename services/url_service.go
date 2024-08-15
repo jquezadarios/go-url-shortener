@@ -9,7 +9,7 @@ import (
 )
 
 type URLService interface {
-    ShortenURL(longURL string, campaign string, medium string, source string, userID uint) (*models.URL, error)
+    ShortenURL(longURL string, name string,campaign string, medium string, source string, userID uint) (*models.URL, error)
     GetURLByShortCode(shortCode string) (*models.URL, error)
     IncrementViewCount(url *models.URL) error
     GetURLStats(shortCode string, userID uint) (*models.URL, error)
@@ -26,7 +26,7 @@ func NewURLService(urlRepo repositories.URLRepository, cache *cache.MemcachedCli
     return &urlService{urlRepo: urlRepo, cache: cache}
 }
 
-func (s *urlService) ShortenURL(longURL string, campaign string, medium string, source string, userID uint) (*models.URL, error) {
+func (s *urlService) ShortenURL(longURL string, name string, campaign string, medium string, source string, userID uint) (*models.URL, error) {
     shortCode, err := shortid.Generate()
     if err != nil {
         return nil, err
@@ -35,6 +35,7 @@ func (s *urlService) ShortenURL(longURL string, campaign string, medium string, 
         LongURL:   longURL,
         ShortCode: shortCode,
         UserID:    userID,
+        Name:      name,
         Campaign:  campaign,
         Medium:    medium,
         Source:    source,

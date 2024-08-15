@@ -17,6 +17,7 @@ func NewURLController(urlService services.URLService) *URLController {
 func (uc *URLController) ShortenURL(c *gin.Context) {
     var input struct {
         LongURL  string `json:"long_url" binding:"required,url"`
+        Name string `json:"name"`
         Campaign string `json:"campaign"`
         Medium   string `json:"medium"`
         Source   string `json:"source"`
@@ -30,7 +31,7 @@ func (uc *URLController) ShortenURL(c *gin.Context) {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
         return
     }
-    url, err := uc.urlService.ShortenURL(input.LongURL, input.Campaign, input.Medium, input.Source, userID.(uint))
+    url, err := uc.urlService.ShortenURL(input.LongURL, input.Name, input.Campaign, input.Medium, input.Source, userID.(uint))
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create shortened URL"})
         return
@@ -38,6 +39,7 @@ func (uc *URLController) ShortenURL(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{
         "message":    "URL shortened successfully",
         "short_code": url.ShortCode,
+        "name":       url.Name,
         "campaign":   url.Campaign,
         "medium":     url.Medium,
         "source":     url.Source,
