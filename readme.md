@@ -9,6 +9,8 @@ Simple high scalable url shortener
 - Multiple users 
 - Uniques shortcodes with no collision
 - Cache
+- Metrics
+- Tags urls with name, campaing, medium and source
 - High scalable 
 
 ## Installation
