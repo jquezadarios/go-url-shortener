@@ -93,3 +93,25 @@ func (uc *URLController) GetURLsByCampaign(c *gin.Context) {
     }
     c.JSON(http.StatusOK, urls)
 }
+
+func (uc *URLController) GetURLsByMedium(c *gin.Context) {
+    medium := c.Query("medium")
+    userID, _ := c.Get("user_id")
+    urls, err := uc.urlService.GetURLsByMedium(medium, userID.(uint))
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch URLs"})
+        return
+    }
+    c.JSON(http.StatusOK, urls)
+}
+
+func (uc *URLController) GetURLsBySource(c *gin.Context) {
+    source := c.Query("source")
+    userID, _ := c.Get("user_id")
+    urls, err := uc.urlService.GetURLsBySource(source, userID.(uint))
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch URLs"})
+        return
+    }
+    c.JSON(http.StatusOK, urls)
+}

@@ -15,6 +15,8 @@ type URLService interface {
     GetURLStats(shortCode string, userID uint) (*models.URL, error)
     GetUserURLs(userID uint) ([]models.URL, error)
     GetURLsByCampaign(campaign string, userID uint) ([]models.URL, error)
+    GetURLsByMedium(medium string, userID uint) ([]models.URL, error)
+    GetURLsBySource(source string, userID uint) ([]models.URL, error)
 }
 
 type urlService struct {
@@ -119,6 +121,35 @@ func (s *urlService) GetURLsByCampaign(campaign string, userID uint) ([]models.U
         return urls, nil
     }
     urls, err = s.urlRepo.FindByCampaignAndUserID(campaign, userID)
+    if err != nil {
+        return nil, err
+    }
+    s.cache.Set(cacheKey, urls, 3600) // Cache for 1 hour
+    return urls, nil
+}
+func (s *urlService) GetURLsByMedium(medium string, userID uint) ([]models.URL, error) {
+    cacheKey := fmt.Sprintf("medium_urls:%s:%d", medium, userID)
+    var urls []models.URL
+    err := s.cache.Get(cacheKey, &urls)
+    if err == nil {
+        return urls, nil
+    }
+    urls, err = s.urlRepo.FindByMediumAndUserID(medium, userID)
+    if err != nil {
+        return nil, err
+    }
+    s.cache.Set(cacheKey, urls, 3600) // Cache for 1 hour
+    return urls, nil
+}
+
+func (s *urlService) GetURLsBySource(source string, userID uint) ([]models.URL, error) {
+    cacheKey := fmt.Sprintf("source_urls:%s:%d", source, userID)
+    var urls []models.URL
+    err := s.cache.Get(cacheKey, &urls)
+    if err == nil {
+        return urls, nil
+    }
+    urls, err = s.urlRepo.FindBySourceAndUserID(source, userID)
     if err != nil {
         return nil, err
     }

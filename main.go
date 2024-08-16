@@ -77,6 +77,8 @@ func main() {
         api.GET("/stats/:shortCode", urlController.GetURLStats)
         api.GET("/my-urls", urlController.GetUserURLs)
         api.GET("/campaign-urls", urlController.GetURLsByCampaign)
+        api.GET("/medium-urls", urlController.GetURLsByMedium)
+        api.GET("/source-urls", urlController.GetURLsBySource)
     }
 
     r.GET("/:shortCode", urlController.RedirectURL)

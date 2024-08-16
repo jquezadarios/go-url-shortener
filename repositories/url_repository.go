@@ -12,6 +12,8 @@ type URLRepository interface {
     FindByShortCodeAndUserID(shortCode string, userID uint) (*models.URL, error)
     FindByUserID(userID uint) ([]models.URL, error)
     FindByCampaignAndUserID(campaign string, userID uint) ([]models.URL, error)
+    FindByMediumAndUserID(medium string, userID uint) ([]models.URL, error)
+    FindBySourceAndUserID(source string, userID uint) ([]models.URL, error)
 }
 
 type urlRepository struct {
@@ -51,5 +53,17 @@ func (r *urlRepository) FindByUserID(userID uint) ([]models.URL, error) {
 func (r *urlRepository) FindByCampaignAndUserID(campaign string, userID uint) ([]models.URL, error) {
     var urls []models.URL
     err := r.db.Where("campaign = ? AND user_id = ?", campaign, userID).Find(&urls).Error
+    return urls, err
+}
+
+func (r *urlRepository) FindByMediumAndUserID(medium string, userID uint) ([]models.URL, error) {
+    var urls []models.URL
+    err := r.db.Where("medium = ? AND user_id = ?", medium, userID).Find(&urls).Error
+    return urls, err
+}
+
+func (r *urlRepository) FindBySourceAndUserID(source string, userID uint) ([]models.URL, error) {
+    var urls []models.URL
+    err := r.db.Where("source = ? AND user_id = ?", source, userID).Find(&urls).Error
     return urls, err
 }
